@@ -20,14 +20,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/products")
 public class ProductController {
-    private final ProductRepository productRepository;
-
-    private final UserRepository userRepository;
-
-    public ProductController(@Autowired ProductRepository productRepository, @Autowired UserRepository userRepository) {
-        this.productRepository = productRepository;
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping()
     @AuthorizeRole(role = Role.BUYER)
