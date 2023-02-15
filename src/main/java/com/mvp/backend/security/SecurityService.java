@@ -13,8 +13,11 @@ import java.util.Optional;
 @Service
 public class SecurityService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public SecurityService(@Autowired UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
 
     public boolean isBuyer(String userToken) {
@@ -25,7 +28,7 @@ public class SecurityService {
         return isRole(userToken, Arrays.asList(Role.SELLER));
     }
 
-    public boolean isAny(String userToken){
+    public boolean isAny(String userToken) {
         return isRole(userToken, Arrays.asList(Role.SELLER, Role.BUYER));
     }
 
