@@ -1,6 +1,7 @@
 package com.mvp.backend.controller;
 
 import com.mvp.backend.controller.response.ErrorMessageResponse;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -33,5 +34,12 @@ public class ValidationExceptionHandler extends
                 HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler({EntityNotFoundException.class})
+    public ResponseEntity<ErrorMessageResponse> handleEntityNotFoundException(
+            EntityNotFoundException ex) {
+
+        return new ResponseEntity<>(new ErrorMessageResponse("Entity not found"), new HttpHeaders(),
+                HttpStatus.NOT_FOUND);
+    }
 
 }

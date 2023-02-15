@@ -16,6 +16,7 @@ Caveats:
 - could use testcontainers for integration tests for testing persistence
 - could use flyway for migration files and initialise the data
 - could use Spring Security instead of AOP
+- could replace the regex for checking multiple of 5 by implementing org.springframework.validation.Validator
 
 # Getting Started
 
@@ -26,7 +27,7 @@ Caveats:
 ### Register as a Seller
 
 ```
-curl --location --request POST 'localhost:8080/users/register' \
+curl --location --request POST 'localhost:8080/users' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "username": "seller",
@@ -37,14 +38,14 @@ curl --location --request POST 'localhost:8080/users/register' \
 
 ### Login as a Seller
 ```
-curl --location --request POST 'localhost:8080/users/login?username=seller&password=1234' \
+curl --location --request POST 'localhost:8080/auth/login?username=seller&password=1234' \
 --header 'Content-Type: application/json' \
 --data-raw ''
 ```
 
 ### Logout all (expires all tokens)
 ```
-curl --location --request POST 'localhost:8080/users/logout/all' \
+curl --location --request POST 'localhost:8080/auth/logout/all' \
 --header 'Content-Type: application/json' \
 --data-raw ''
 ```

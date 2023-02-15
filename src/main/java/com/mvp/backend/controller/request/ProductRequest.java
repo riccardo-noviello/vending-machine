@@ -8,5 +8,5 @@ import static com.mvp.backend.Constants.MULTIPLE_OF_FIVE;
 
 
 public record ProductRequest(
-        @NotEmpty String productName, @Pattern(regexp = MULTIPLE_OF_FIVE) int cost, @PositiveOrZero int amountAvailable) {
+        @NotEmpty String productName, @Pattern(regexp = MULTIPLE_OF_FIVE) String cost, @PositiveOrZero int amountAvailable) {
 }

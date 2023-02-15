@@ -7,6 +7,7 @@ import com.mvp.backend.model.User;
 import com.mvp.backend.repository.ProductRepository;
 import com.mvp.backend.repository.UserRepository;
 import com.mvp.backend.security.AuthorizeRole;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,12 +20,14 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/products")
 public class ProductController {
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    public ProductController(@Autowired ProductRepository productRepository, @Autowired UserRepository userRepository) {
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
+    }
 
     @GetMapping()
     @AuthorizeRole(role = Role.BUYER)
@@ -40,7 +43,7 @@ public class ProductController {
         if ((user.isEmpty())) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        Product entity = Product.builder().productName(product.productName()).cost(product.cost()).amountAvailable(product.amountAvailable()).sellerId(user.get().getId()).build();
+        Product entity = mapProductToEntity(product, user);
         productRepository.save(entity);
         return new ResponseEntity<>(entity, HttpStatus.CREATED);
     }
@@ -48,16 +51,13 @@ public class ProductController {
     @PutMapping("/{productId}")
     @AuthorizeRole(role = Role.SELLER)
     public ResponseEntity<Product> updateProduct(@PathVariable("productId") Long productId, @Valid @RequestBody ProductRequest product, @RequestHeader("Authorization") String token) {
-        Product foundProduct = productRepository.findById(productId).orElse(null);
+        Product foundProduct = productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException());
         Optional<User> user = userRepository.findByToken(token);
-        if ((foundProduct == null)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         if ((user.isEmpty()) || !isSellerMatching(foundProduct, user)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         foundProduct.setAmountAvailable(product.amountAvailable());
-        foundProduct.setCost(product.cost());
+        foundProduct.setCost(Integer.valueOf(product.cost()));
         foundProduct.setProductName(product.productName());
         productRepository.save(foundProduct);
         return new ResponseEntity<>(foundProduct, HttpStatus.OK);
@@ -67,10 +67,7 @@ public class ProductController {
     @AuthorizeRole(role = Role.SELLER)
     public ResponseEntity<String> deleteProduct(@PathVariable("productId") Long productId, @RequestHeader("Authorization") String token) {
         Optional<User> user = userRepository.findByToken(token);
-        Product foundProduct = productRepository.findById(productId).orElse(null);
-        if ((foundProduct == null)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Product foundProduct = productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException());
         if ((user.isEmpty()) || !isSellerMatching(foundProduct, user)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -81,6 +78,12 @@ public class ProductController {
 
     private static boolean isSellerMatching(Product foundProduct, Optional<User> user) {
         return user.isPresent() && foundProduct.getSellerId().equals(user.get().getId());
+    }
+
+
+    private static Product mapProductToEntity(ProductRequest product, Optional<User> user) {
+        Product entity = Product.builder().productName(product.productName()).cost(Integer.valueOf(product.cost())).amountAvailable(product.amountAvailable()).sellerId(user.get().getId()).build();
+        return entity;
     }
 
 }

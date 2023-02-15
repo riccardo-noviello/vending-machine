@@ -28,7 +28,7 @@ public class Product {
     @NotNull(message = "productName is required")
     private String productName;
 
-    @Pattern(regexp = MULTIPLE_OF_FIVE)
+    @PositiveOrZero
     private int cost;
 
     @PositiveOrZero
