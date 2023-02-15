@@ -1,5 +1,6 @@
 package com.mvp.backend.controller;
 
+import com.mvp.backend.controller.request.ProductRequest;
 import com.mvp.backend.model.Product;
 import com.mvp.backend.model.Role;
 import com.mvp.backend.model.User;
@@ -34,24 +35,32 @@ public class ProductController {
 
     @PostMapping()
     @AuthorizeRole(role = Role.SELLER)
-    public ResponseEntity<String> addProduct(@Valid @RequestBody Product product) {
-        productRepository.save(product);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<Product> addProduct(@Valid @RequestBody ProductRequest product, @RequestHeader("Authorization") String token) {
+        Optional<User> user = userRepository.findByToken(token);
+        if ((user.isEmpty())) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        Product entity = Product.builder().productName(product.productName()).cost(product.cost()).amountAvailable(product.amountAvailable()).sellerId(user.get().getId()).build();
+        productRepository.save(entity);
+        return new ResponseEntity<>(entity, HttpStatus.CREATED);
     }
 
     @PutMapping("/{productId}")
     @AuthorizeRole(role = Role.SELLER)
-    public ResponseEntity<String> updateProduct(@PathVariable("productId") Long productId, @RequestBody Product product, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<Product> updateProduct(@PathVariable("productId") Long productId, @RequestBody ProductRequest product, @RequestHeader("Authorization") String token) {
         Product foundProduct = productRepository.findById(productId).orElse(null);
         Optional<User> user = userRepository.findByToken(token);
-        if ((foundProduct == null && user.isPresent()) || !foundProduct.getSellerId().equals(user.get().getId())) {
+        if ((foundProduct == null)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        if ((user.isEmpty()) || !isSellerMatching(foundProduct, user)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        foundProduct.setAmountAvailable(product.getAmountAvailable());
-        foundProduct.setCost(product.getCost());
-        foundProduct.setProductName(product.getProductName());
+        foundProduct.setAmountAvailable(product.amountAvailable());
+        foundProduct.setCost(product.cost());
+        foundProduct.setProductName(product.productName());
         productRepository.save(foundProduct);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(foundProduct, HttpStatus.OK);
     }
 
     @DeleteMapping("/{productId}")
@@ -59,10 +68,19 @@ public class ProductController {
     public ResponseEntity<String> deleteProduct(@PathVariable("productId") Long productId, @RequestHeader("Authorization") String token) {
         Optional<User> user = userRepository.findByToken(token);
         Product foundProduct = productRepository.findById(productId).orElse(null);
-        if ((foundProduct == null && user.isPresent()) || !foundProduct.getSellerId().equals(user.get().getId())) {
+        if ((foundProduct == null)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        if ((user.isEmpty()) || !isSellerMatching(foundProduct, user)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
+
+
+    private static boolean isSellerMatching(Product foundProduct, Optional<User> user) {
+        return user.isPresent() && foundProduct.getSellerId().equals(user.get().getId());
+    }
+
 }

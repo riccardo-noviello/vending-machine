@@ -1,6 +1,6 @@
 package com.mvp.backend.controller;
 
-import com.mvp.backend.controller.response.ErrorDto;
+import com.mvp.backend.controller.response.ErrorMessageResponse;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -18,18 +18,18 @@ public class ValidationExceptionHandler extends
         ResponseEntityExceptionHandler {
 
     @ExceptionHandler({DataIntegrityViolationException.class})
-    public ResponseEntity<ErrorDto> handleValidationException(
+    public ResponseEntity<ErrorMessageResponse> handleValidationException(
             DataIntegrityViolationException ex) {
 
-        return new ResponseEntity<>(new ErrorDto("Invalid constraint validation error"), new HttpHeaders(),
+        return new ResponseEntity<>(new ErrorMessageResponse("Invalid constraint validation error"), new HttpHeaders(),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({UnauthorizedUserException.class})
-    public ResponseEntity<ErrorDto> handleUnauthorizedUserException(
+    public ResponseEntity<ErrorMessageResponse> handleUnauthorizedUserException(
             UnauthorizedUserException ex) {
 
-        return new ResponseEntity<>(new ErrorDto(ex.getMessage()), new HttpHeaders(),
+        return new ResponseEntity<>(new ErrorMessageResponse(ex.getMessage()), new HttpHeaders(),
                 HttpStatus.UNAUTHORIZED);
     }
 
