@@ -47,7 +47,7 @@ public class ProductController {
 
     @PutMapping("/{productId}")
     @AuthorizeRole(role = Role.SELLER)
-    public ResponseEntity<Product> updateProduct(@PathVariable("productId") Long productId, @RequestBody ProductRequest product, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<Product> updateProduct(@PathVariable("productId") Long productId, @Valid @RequestBody ProductRequest product, @RequestHeader("Authorization") String token) {
         Product foundProduct = productRepository.findById(productId).orElse(null);
         Optional<User> user = userRepository.findByToken(token);
         if ((foundProduct == null)) {
@@ -74,7 +74,7 @@ public class ProductController {
         if ((user.isEmpty()) || !isSellerMatching(foundProduct, user)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-
+        productRepository.delete(foundProduct);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 

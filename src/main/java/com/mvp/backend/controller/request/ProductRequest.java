@@ -1,4 +1,12 @@
 package com.mvp.backend.controller.request;
 
-public record ProductRequest(String productName, int cost, int amountAvailable) {
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.PositiveOrZero;
+
+import static com.mvp.backend.Constants.MULTIPLE_OF_FIVE;
+
+
+public record ProductRequest(
+        @NotEmpty String productName, @Pattern(regexp = MULTIPLE_OF_FIVE) int cost, @PositiveOrZero int amountAvailable) {
 }

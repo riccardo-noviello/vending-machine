@@ -5,10 +5,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import static com.mvp.backend.Constants.MULTIPLE_OF_FIVE;
 
 @Builder
 @Data
@@ -24,10 +28,10 @@ public class Product {
     @NotNull(message = "productName is required")
     private String productName;
 
-    @NotNull(message = "cost is required")
+    @Pattern(regexp = MULTIPLE_OF_FIVE)
     private int cost;
 
-    @NotNull(message = "amountAvailable is required")
+    @PositiveOrZero
     private int amountAvailable;
 
     @NotNull(message = "sellerId is required")

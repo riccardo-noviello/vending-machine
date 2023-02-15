@@ -1,22 +1,24 @@
 package com.mvp.backend.controller;
 
+import com.mvp.backend.model.Role;
 import com.mvp.backend.model.User;
 import com.mvp.backend.repository.ProductRepository;
 import com.mvp.backend.repository.UserRepository;
+import com.mvp.backend.security.AuthorizeRole;
 import com.mvp.backend.security.TokenProvider;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     @Autowired
@@ -50,10 +52,13 @@ public class UserController {
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyRole('SELLER', 'BUYER')")
     @PostMapping("/logout/all")
     public ResponseEntity<String> logoutAll() {
-        // TODO:
+        var users = userRepository.findAll().stream().map(user -> {
+            user.setToken(null);
+            return user;
+        }).collect(Collectors.toList());
+        userRepository.saveAll(users);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }
