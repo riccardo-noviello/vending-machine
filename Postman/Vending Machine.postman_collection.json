@@ -178,13 +178,13 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer seller3d74c5de-1a91-42c0-9a5e-094c939b39e5",
+						"value": "Bearer seller10577901-b136-4ff1-8f05-3cea956f6c68",
 						"type": "default"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"productName\": \"Mars Bar\",\n    \"cost\": 0,\n    \"amountAvailable\" : 0\n}",
+					"raw": "{\n    \"productName\": \"Mars Bar\",\n    \"cost\": \"0\",\n    \"amountAvailable\" : 0\n}",
 					"options": {
 						"raw": {
 							"language": "json"
