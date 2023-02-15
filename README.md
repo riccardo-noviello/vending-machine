@@ -5,8 +5,7 @@ Vending Machine Api - coding exercise.
 Spring Boot 3, Java 17, Maven, H2 in memory DB
 
 Caveats:
-- Uses a mock JWT token, but the authentication mechanism is a oauth2
-- Token does not expire
+- The authentication mechanism is Oauth2, but token has no expiry logic
 - In memory DB means all data disappears after the application shuts down
 
 
