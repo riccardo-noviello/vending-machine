@@ -7,7 +7,7 @@ Spring Boot 3, Java 17, Maven, H2 in memory DB
 Caveats:
 - The authentication mechanism is Oauth2, but token has no expiry logic
 - In memory DB means all data disappears after the application shuts down
-
+- did not implement deposit and buy endpoint
 
 # Potential Improvements
 - could implement a real JWT token authentication
