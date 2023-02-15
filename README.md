@@ -53,7 +53,7 @@ curl --location --request POST 'localhost:8080/users/logout/all' \
 ```
 curl --location --request GET 'localhost:8080/products' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer buyerc33091dd-0f0c-4776-908f-73d080a1b26c' \
+--header 'Authorization: Bearer buyerc33091...26c' \
 --data-raw ''
 ```
 
@@ -61,7 +61,7 @@ curl --location --request GET 'localhost:8080/products' \
 ```
 curl --location --request POST 'localhost:8080/products' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer seller674bbcf1-8169-4fba-9dc7-2ac1b812f2df' \
+--header 'Authorization: Bearer seller674bbcf...c1b812f2df' \
 --data-raw '{
     "productName": "Mars Bar",
     "cost": 0,
@@ -75,7 +75,7 @@ curl --location --request POST 'localhost:8080/products' \
 ```
 curl --location --request PUT 'localhost:8080/products/1' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer seller674bbcf1-8169-4fba-9dc7-2ac1b812f2df' \
+--header 'Authorization: Bearer seller674bbcf...c1b812f2df' \
 --data-raw '{
     "productName": "Mars Bar",
     "cost": 5,
@@ -89,7 +89,7 @@ curl --location --request PUT 'localhost:8080/products/1' \
 ```
 curl --location --request DELETE 'localhost:8080/products/1' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer seller674bbcf1-8169-4fba-9dc7-2ac1b812f2df' \
+--header 'Authorization: Bearer seller674bbcf...c1b812f2df' \
 --data-raw ''
 
 ```
